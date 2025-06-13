@@ -1,0 +1,149 @@
+import requests
+import base64
+import getpass
+import json
+
+class Application:
+    def __init__(self, app_id, name):
+        self.app_id = app_id
+        self.name = name
+
+# set the default for re-using within your organization
+contrast_url = ""
+org_id = ""
+username = ""
+api_key = ""  # never save this in a public repo as it's a secret/sensitive information
+service_key = "" # never save this in a public repo as it's a secret/sensitive information
+
+headers = {
+    "Accept": "application/json"
+}
+params = {
+    "expand": ["apps", "vulns"]
+}
+
+def getApplications(headers, params, org_id):
+    url = f"{contrast_url}/api/ng/{org_id}/applications"
+    response = requests.get(url, headers=headers, params=params)
+    return response
+
+def getPolicies(headers, params, org_id, app_id):
+    url = f"{contrast_url}/api/ng/{org_id}/applications/{app_id}/exclusions"
+    response = requests.get(url, headers=headers, params=params)
+    return response
+
+def read_json_file(filename):
+    with open(filename, "r") as f:
+        return f.read()
+
+def postNewExclusion(headers, params, org_id, app_id, exclusion):
+    url = f"{contrast_url}/api/ng/{org_id}/applications/{app_id}/exclusions"
+    response = requests.post(url, headers=headers, params=params, json=exclusion)
+    return response
+
+def main():
+    global contrast_url, org_id, username, api_key, service_key
+
+    msg = f"Enter your Contrast URL (blank will use default \'{contrast_url}\'): "
+    contrast_url_input = input(msg)
+    if contrast_url_input.strip():
+        contrast_url = contrast_url_input
+    else:
+        while not contrast_url_input.strip():
+            print("Contrast URL cannot be blank.")
+            contrast_url_input = input(msg)
+            contrast_url = contrast_url_input
+
+    msg = f"Enter your Organization ID (blank will use default \'{org_id}\'): "
+    org_id_input = input(msg)
+    if org_id_input.strip():
+        org_id = org_id_input
+    else:
+        while not org_id_input.strip():
+            print("Organization ID cannot be blank.")
+            org_id_input = input(msg)
+            org_id = org_id_input
+    
+    msg = f"Enter your username (blank will use default \'{username}\'): "
+    username_input = input(msg)
+    if username_input.strip():
+        username = username_input
+    else:
+        while not username_input.strip():
+            print("Username cannot be blank.")
+            username_input = input(msg)
+            username = username_input
+
+    msg = f"Enter your API key (blank will use default \'****************************\'): "
+    api_key_input = getpass.getpass(msg)
+    if api_key_input.strip():
+        api_key = api_key_input
+    else:
+        while not api_key_input.strip():
+            print("API key cannot be blank.")
+            api_key_input = getpass.getpass(msg)
+            api_key = api_key_input
+
+    msg = f"Enter your service key (blank will use default \'************\'): "
+    service_key_input = getpass.getpass(msg)
+    if service_key_input.strip():
+        service_key = service_key_input
+    else:
+        while not service_key_input.strip():
+            print("Service key cannot be blank.")
+            service_key_input = getpass.getpass(msg)
+            service_key = service_key_input
+
+    # Debug output
+    print("Adding Policy exclusions to all applications in organization.")
+    
+    auth_str = f"{username}:{service_key}"
+    auth_b64 = base64.b64encode(auth_str.encode()).decode()
+    headers["Authorization"] = f"Basic {auth_b64}"
+    headers["API-Key"] = api_key
+
+    response = getApplications(headers, params, org_id)
+    if response.status_code == 200:
+        data = response.json()
+        with open("output.json", "w") as f:
+            json.dump(data, f, indent=2)
+        print("Applications response saved to output.json")
+
+        applications = []
+        # Adjust the following path as needed based on actual API response structure
+        if data.get("applications"):
+            app_list = data["applications"]
+            for app in app_list:
+                app_id = app.get("app_id")
+                name = app.get("name")
+                if app_id and name:
+                    applications.append(Application(app_id, name))
+        else:
+            print("No applications found in response.")
+            return
+
+        policies_results = {}
+        for app in applications:
+            policy_response = getPolicies(headers, params, org_id, app.app_id)
+            if policy_response.status_code == 200:
+                policy_json = policy_response.json()
+                policies_results[app.app_id] = policy_json
+                # Write each app_id's policies to a separate file
+                filename = f"{app.name}-policies.json"
+                with open(filename, "w") as f:
+                    json.dump(policy_json, f, indent=2)
+                print(f"Policies for app_id {app.app_id} ({app.name}) saved to {filename}")
+
+                body = read_json_file("exclusion_body.json")
+                postNewExclusion(headers, params, org_id, app.app_id, json.loads(body))
+            else:
+                print(f"Error fetching policies for app_id {app.app_id}: {policy_response.status_code}")
+
+        with open("policies_output.json", "w") as f:
+            json.dump(policies_results, f, indent=2)
+        print("Policies responses saved to policies_output.json")
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+
+if __name__ == "__main__":
+    main()

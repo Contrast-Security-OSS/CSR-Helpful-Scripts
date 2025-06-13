@@ -1,0 +1,16 @@
+{
+    "name": "TEST-JASON-PUT-EXCLUSION",
+    "type": "CODE",
+    "all_rules": false,
+    "all_assessment_rules": false,
+    "all_protection_rules": false,
+    "assessment_rules": [
+        "untrusted-deserialization"
+    ],
+    "protection_rules": [],
+    "codes": [
+        "com.test.jason.put"
+    ],
+    "urls": [],
+    "queues": []
+}
