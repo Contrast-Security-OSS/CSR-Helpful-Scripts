@@ -8,11 +8,15 @@ class Application:
         self.app_id = app_id
         self.name = name
 
-# set the default for re-using within your organization
+# set the default for re-using within your organization.  example: https://blah.contrastsecurity.com/Contrast/
 contrast_url = ""
+# set the default for your organization ID, example: a234323b-23a3-333c-111e-1234561abc32
 org_id = ""
+# set the default for your username, example: firstname.lastname@domain.com
 username = ""
+# set the default for your API key, example: 8qut7ylK42ZUZiWB4UHg8SlcBeC5eKOc
 api_key = ""  # never save this in a public repo as it's a secret/sensitive information
+# set the default for your service key, example: J32NO12345ZYWUTV
 service_key = "" # never save this in a public repo as it's a secret/sensitive information
 
 headers = {
@@ -49,7 +53,7 @@ def main():
     if contrast_url_input.strip():
         contrast_url = contrast_url_input
     else:
-        while not contrast_url_input.strip():
+        while not contrast_url_input.strip() and not contrast_url.strip():
             print("Contrast URL cannot be blank.")
             contrast_url_input = input(msg)
             contrast_url = contrast_url_input
@@ -59,7 +63,7 @@ def main():
     if org_id_input.strip():
         org_id = org_id_input
     else:
-        while not org_id_input.strip():
+        while not org_id_input.strip() and not org_id.strip():
             print("Organization ID cannot be blank.")
             org_id_input = input(msg)
             org_id = org_id_input
@@ -69,7 +73,7 @@ def main():
     if username_input.strip():
         username = username_input
     else:
-        while not username_input.strip():
+        while not username_input.strip() and not username.strip():
             print("Username cannot be blank.")
             username_input = input(msg)
             username = username_input
@@ -79,7 +83,7 @@ def main():
     if api_key_input.strip():
         api_key = api_key_input
     else:
-        while not api_key_input.strip():
+        while not api_key_input.strip() and not api_key.strip():
             print("API key cannot be blank.")
             api_key_input = getpass.getpass(msg)
             api_key = api_key_input
@@ -89,7 +93,8 @@ def main():
     if service_key_input.strip():
         service_key = service_key_input
     else:
-        while not service_key_input.strip():
+        while not service_key_input.strip() and not service_key.strip():
+
             print("Service key cannot be blank.")
             service_key_input = getpass.getpass(msg)
             service_key = service_key_input
