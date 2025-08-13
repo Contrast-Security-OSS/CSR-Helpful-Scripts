@@ -1,0 +1,5 @@
+.creds
+output.json
+*.log
+*.logs
+.DS_Store

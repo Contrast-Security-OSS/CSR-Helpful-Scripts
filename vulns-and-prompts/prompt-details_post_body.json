@@ -1,0 +1,10 @@
+{
+    "teamserverHost": "https://{teamserver-example}.contsec.com",
+    "repoRootDir": "/{path-to-local-repo}/demo1",
+    "repoUrl": "https://github.com/{repo-location}/jason-demo1",
+    "maxPullRequests": 5,
+    "severities": [
+      "CRITICAL",
+      "HIGH"
+    ]
+  }

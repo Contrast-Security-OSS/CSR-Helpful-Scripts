@@ -1,0 +1,10 @@
+# .creds file - Never commit this to version control, 
+# #### 1. rename this to .creds
+# .creds is in the gitignore, so it should not be committed to repo
+# if .creds does not exist, it will/should prompt you in the program for your creds.
+CONTRAST_URL=
+ORG_ID=
+USERNAME=
+API_KEY=
+SERVICE_KEY=
+APP_ID=

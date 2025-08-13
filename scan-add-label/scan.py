@@ -8,16 +8,30 @@ class Application:
         self.app_id = app_id
         self.name = name
 
-# set the default for re-using within your organization.  example: https://blah.contrastsecurity.com/Contrast/
-contrast_url = ""
-# set the default for your organization ID, example: a234323b-23a3-333c-111e-1234561abc32
-org_id = ""
-# set the default for your username, example: firstname.lastname@domain.com
-username = ""
-# set the default for your API key, example: 8qut7ylK42ZUZiWB4UHg8SlcBeC5eKOc
-api_key = ""  # never save this in a public repo as it's a secret/sensitive information
-# set the default for your service key, example: J32NO12345ZYWUTV
-service_key = "" # never save this in a public repo as it's a secret/sensitive information
+def read_creds_file(filename="../.creds"):
+    """Read credentials from a .creds file"""
+    creds = {}
+    try:
+        with open(filename, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    creds[key] = value
+    except FileNotFoundError:
+        print(f"Warning: {filename} file not found. Please input values.")
+    return creds
+
+# Read credentials from .creds file
+creds = read_creds_file()
+
+# Set the default for re-using within your organization.
+contrast_url = creds.get("CONTRAST_URL", "")
+org_id = creds.get("ORG_ID", "")
+username = creds.get("USERNAME", "")
+api_key = creds.get("API_KEY", "")
+service_key = creds.get("SERVICE_KEY", "")
+app_id = creds.get("APP_ID", "")
 
 authorization_key = ""
 

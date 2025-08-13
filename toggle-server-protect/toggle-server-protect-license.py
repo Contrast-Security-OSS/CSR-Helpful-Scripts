@@ -8,16 +8,30 @@ class Application:
         self.app_id = app_id
         self.name = name
 
-# set the default for re-using within your organization.  example: https://blah.contrastsecurity.com/Contrast/
-contrast_url = ""
-# set the default for your organization ID, example: a234323b-23a3-333c-111e-1234561abc32
-org_id = ""
-# set the default for your username, example: firstname.lastname@domain.com
-username = ""
-# set the default for your API key, example: 8qut7ylK42ZUZiWB4UHg8SlcBeC5eKOc
-api_key = ""  # never save this in a public repo as it's a secret/sensitive information
-# set the default for your service key, example: J32NO12345ZYWUTV
-service_key = "" # never save this in a public repo as it's a secret/sensitive information
+def read_creds_file(filename="../.creds"):
+    """Read credentials from a .creds file"""
+    creds = {}
+    try:
+        with open(filename, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    creds[key] = value
+    except FileNotFoundError:
+        print(f"Warning: {filename} file not found. Please input values.")
+    return creds
+
+# Read credentials from .creds file
+creds = read_creds_file()
+
+# Set the default for re-using within your organization.
+contrast_url = creds.get("CONTRAST_URL", "")
+org_id = creds.get("ORG_ID", "")
+username = creds.get("USERNAME", "")
+api_key = creds.get("API_KEY", "")
+service_key = creds.get("SERVICE_KEY", "")
+app_id = creds.get("APP_ID", "")
 
 headers = {
     "Accept": "application/json"
@@ -26,15 +40,13 @@ params = {
     "expand": ["apps", "vulns"]
 }
 
-
-
 def getServers(headers, params, org_id):
     url = f"{contrast_url}/api/ng/{org_id}/servers"
     response = requests.get(url, headers=headers, params=params)
     return response
 
 def putToggleServerProtect(headers, params, org_id, server_id):
-    url = f"{contrast_url}/api/ng/{org_id}/servers/{server_id}/defend"    
+    url = f"{contrast_url}/api/ng/{org_id}/servers/{server_id}/defend"
     response = requests.put(url, headers=headers, params=params)
     return response
 
@@ -45,7 +57,7 @@ def read_json_file(filename):
 def main():
     global contrast_url, org_id, username, api_key, service_key
 
-    msg = f"Enter your Contrast URL (blank will use default \'{contrast_url}\'): "
+    msg = f"Enter your Contrast URL (blank will use default '{contrast_url}'): "
     contrast_url_input = input(msg)
     if contrast_url_input.strip():
         contrast_url = contrast_url_input
@@ -55,7 +67,7 @@ def main():
             contrast_url_input = input(msg)
             contrast_url = contrast_url_input
 
-    msg = f"Enter your Organization ID (blank will use default \'{org_id}\'): "
+    msg = f"Enter your Organization ID (blank will use default '{org_id}'): "
     org_id_input = input(msg)
     if org_id_input.strip():
         org_id = org_id_input
@@ -64,8 +76,8 @@ def main():
             print("Organization ID cannot be blank.")
             org_id_input = input(msg)
             org_id = org_id_input
-    
-    msg = f"Enter your username (blank will use default \'{username}\'): "
+
+    msg = f"Enter your username (blank will use default '{username}'): "
     username_input = input(msg)
     if username_input.strip():
         username = username_input
@@ -75,7 +87,7 @@ def main():
             username_input = input(msg)
             username = username_input
 
-    msg = f"Enter your API key (blank will use default \'****************************\'): "
+    msg = f"Enter your API key (blank will use default '****************************'): "
     api_key_input = getpass.getpass(msg)
     if api_key_input.strip():
         api_key = api_key_input
@@ -85,18 +97,17 @@ def main():
             api_key_input = getpass.getpass(msg)
             api_key = api_key_input
 
-    msg = f"Enter your service key (blank will use default \'************\'): "
+    msg = f"Enter your service key (blank will use default '************'): "
     service_key_input = getpass.getpass(msg)
     if service_key_input.strip():
         service_key = service_key_input
     else:
         while not service_key_input.strip() and not service_key.strip():
-
             print("Service key cannot be blank.")
             service_key_input = getpass.getpass(msg)
             service_key = service_key_input
 
-    #list of servers to ensure I don't just disable/enable all servers.  MODIFY THIS LIST OR PULL IN YOUR OWN LIST
+    # List of servers to ensure I don't just disable/enable all servers. MODIFY THIS LIST OR PULL IN YOUR OWN LIST
     servers_list = [90926, 90086, 90001]
 
     auth_str = f"{username}:{service_key}"
@@ -111,20 +122,17 @@ def main():
             json.dump(data, f, indent=2)
         print("Servers response saved to output.json")
 
-        servers = []
         # Adjust the following path as needed based on actual API response structure
         if data.get("servers"):
             server_list = data["servers"]
             for server in server_list:
                 server_id = server.get("server_id")
                 if server_id in servers_list:
-                    # this toggles the server protect feature.
+                    # This toggles the server protect feature.
                     putToggleServerProtect(headers, params, org_id, server_id)
-
         else:
             print("No servers found in response.")
             return
-
     else:
         print(f"Error: {response.status_code} - {response.text}")
 
