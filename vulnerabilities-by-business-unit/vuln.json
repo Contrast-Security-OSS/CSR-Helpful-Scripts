@@ -1,0 +1,70 @@
+{
+  "success": true,
+  "messages": [
+    "Organization vulnerabilities and sink groups loaded successfully"
+  ],
+  "items": [
+    {
+      "vulnerability": {
+        "uuid": "0ORP-NZ4J-73VR-DR24",
+        "title": "'MD5' hash algorithm used at Digester.java",
+        "ruleName": "crypto-bad-mac",
+        "visible": true,
+        "severity": "MEDIUM",
+        "defaultSeverity": "MEDIUM",
+        "tags": [],
+        "application": {
+          "mostPermissiveRole": "ADMIN",
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "CargoCats-contrast-cargo-cats-dataservice",
+          "isLicensed": true,
+          "language": "Java",
+          "contextPath": "/",
+          "importance": "HIGH",
+          "isParentApp": false,
+          "actions": []
+        },
+        "lastDetected": 1764873780000,
+        "firstDetected": 1764692100000,
+        "status": "Reported",
+        "statusKeycode": "Reported",
+        "subStatus": "",
+        "violations": [],
+        "sessionMetadata": [],
+        "protectStatus": "NO_RULE_AVAILABLE"
+      }
+    },
+    {
+      "vulnerability": {
+        "uuid": "VJ1Q-1QDO-DJ20-XUJ3",
+        "title": "Anti-Caching Controls Missing detected",
+        "ruleName": "cache-controls-missing",
+        "visible": true,
+        "severity": "NOTE",
+        "defaultSeverity": "NOTE",
+        "tags": [],
+        "application": {
+          "mostPermissiveRole": "ADMIN",
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "CargoCats-contrast-cargo-cats-dataservice",
+          "isLicensed": true,
+          "language": "Java",
+          "contextPath": "/",
+          "importance": "HIGH",
+          "isParentApp": false,
+          "actions": []
+        },
+        "lastDetected": 1764881640000,
+        "firstDetected": 1764695280000,
+        "status": "Reported",
+        "statusKeycode": "Reported",
+        "subStatus": "",
+        "violations": [],
+        "sessionMetadata": [],
+        "protectStatus": "NO_RULE_AVAILABLE"
+      }
+    }
+  ],
+  "count": 2,
+  "licensedVulnerabilityCount": 2
+}

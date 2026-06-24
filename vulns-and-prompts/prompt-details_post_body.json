@@ -1,0 +1,10 @@
+{
+    "teamserverHost": "https://teamserver-url",
+    "repoRootDir": "/",
+    "repoUrl": "https://github.com/Contrast-Security-OSS/repo-url",
+    "maxPullRequests": 5,
+    "severities": [
+      "CRITICAL",
+      "HIGH"
+    ]
+  }

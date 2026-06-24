@@ -1,0 +1,51 @@
+# Credentials and sensitive files
+.creds
+*.creds
+*.pem
+*.key
+*.env
+.env.*
+*.backup
+
+# Generated outputs (any script may produce these)
+output*.json
+*_output.json
+*-policies.json
+attacks_*.json
+RiskSense*.csv
+*.csv
+
+# Allow-list of tracked CSV/JSON templates that ARE meant to live in the repo
+!*body.json
+!tags.json
+!vuln.json
+!**/template.creds
+
+# Log files
+*.log
+*.logs
+
+# Private security review reports — never commit, keep in private storage
+vulnerabilities-by-business-unit/fix-these-vulns.md
+
+# System files
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp

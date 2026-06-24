@@ -1,0 +1,18 @@
+# .creds file, never commit this to version control.
+#
+# Setup:
+#   1. cp template.creds .creds
+#   2. chmod 600 .creds          # restrict to current user, plaintext secrets live here
+#   3. Fill in the values below.
+#
+# .creds is covered by .gitignore. If .creds is missing, scripts prompt interactively.
+#
+# Values are stored in plaintext. For stronger protection, consider an OS keychain
+# (Keychain on macOS, DPAPI on Windows, libsecret on Linux) via the `keyring` package
+# and remove this file once migrated.
+CONTRAST_URL=
+ORG_ID=
+USERNAME=
+API_KEY=
+SERVICE_KEY=
+APP_ID=

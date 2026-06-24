@@ -1,0 +1,67 @@
+# DISCLAIMER: This workflow file has been auto-generated and committed to the repo by the GitHub App from Contrast Security.
+# Manual edits to this file could cause the integration to produce unexpected behavior or break.
+# Version: 1.0.2
+# Last updated: 2026-02-12T17:42:57.419881421Z
+name: Contrast Security SCA App Workflow
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+jobs:
+  fingerprint_repo:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
+        with:
+          egress-policy: audit
+
+      - name: Clone repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Run Contrast SCA Fingerprint
+        id: fingerprint
+        uses: Contrast-Security-OSS/contrast-sca-action@c953b1def9b16036e6aa1775daf9030f40f80de6 # v3.2.6
+        with:
+          apiKey: ${{ secrets.CONTRAST_GITHUB_APP_API_KEY }}
+          authHeader: ${{ secrets.CONTRAST_GITHUB_APP_AUTH_HEADER }}
+          orgId: ${{ vars.CONTRAST_GITHUB_APP_ORG_ID }}
+          apiUrl: ${{ vars.CONTRAST_GITHUB_APP_TS_URL }}
+          repoUrl: ${{ github.server_url }}/${{ github.repository }}
+          repoName: ${{ github.repository }}
+          externalId: ${{ vars.CONTRAST_GITHUB_APP_ID }}
+          command: fingerprint
+    outputs:
+      fingerprint: ${{ steps.fingerprint.outputs.fingerprint }}
+  analyze_dependencies:
+    if: ${{ needs.fingerprint_repo.outputs.fingerprint != '' }}
+    needs: fingerprint_repo
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        manifest:
+          - ${{ fromJson(needs.fingerprint_repo.outputs.fingerprint) }}
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
+        with:
+          egress-policy: audit
+
+      - name: Clone repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Run Contrast SCA Audit
+        uses: Contrast-Security-OSS/contrast-sca-action@c953b1def9b16036e6aa1775daf9030f40f80de6 # v3.2.6
+        with:
+          apiKey: ${{ secrets.CONTRAST_GITHUB_APP_API_KEY }}
+          authHeader: ${{ secrets.CONTRAST_GITHUB_APP_AUTH_HEADER }}
+          orgId: ${{ vars.CONTRAST_GITHUB_APP_ORG_ID }}
+          apiUrl: ${{ vars.CONTRAST_GITHUB_APP_TS_URL }}
+          filePath: ${{ matrix.manifest.filePath }}
+          repositoryId: ${{ matrix.manifest.repositoryId }}
+          projectGroupId: ${{ matrix.manifest.projectGroupId }}

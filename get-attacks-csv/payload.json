@@ -1,0 +1,18 @@
+{
+    "quickFilter": "EFFECTIVE",
+    "keyword": "",
+    "includeSuppressed": false,
+    "includeBotBlockers": false,
+    "includeIpBlacklist": false,
+    "startDate": "1774295580000",
+    "endDate": "1776887580000",
+    "tags": [],
+    "statusFilter": [],
+    "protectionRules": [],
+    "applications": [],
+    "applicationImportances": [],
+    "attackers": [],
+    "servers": [],
+    "serverEnvironments": [],
+    "severities": []
+}
