@@ -3,7 +3,7 @@
 
 # HTTP requests library for API calls
 requests>=2.34.2
-aiohttp>=3.14.1
+aiohttp>=3.14.2
 
 # Optional: Enhanced JSON handling (if needed for complex JSON operations)
 # jsonschema>=4.0.0
